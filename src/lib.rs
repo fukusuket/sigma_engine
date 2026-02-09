@@ -41,9 +41,13 @@ pub mod condition;
 pub mod error;
 mod parser;
 pub mod types;
+pub mod matcher;
+pub mod processor;
 
 pub use error::Error;
 pub use types::*;
+pub use matcher::SigmaRuleMatcher;
+pub use processor::{LogProcessor, Detection, LogEvent};
 
 // Re-export chrono's NaiveDate for date field access
 pub use chrono::NaiveDate;
