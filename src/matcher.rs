@@ -679,8 +679,11 @@ impl SigmaRuleMatcher {
             CompiledPattern::Int(i) => {
                 match value {
                     Value::Integer(v) => self.match_numeric_int(*v, *i, modifiers),
-                    Value::String(s) if let Ok(parsed) = value.as_str().parse::<i64>() => {
-                        self.match_numeric_int(parsed, *i, modifiers)
+                    Value::String(s) => {
+                        match s.parse::<i64>() {
+                            Ok(parsed) =>  self.match_numeric_int(parsed, *i, modifiers),
+                            _ => false
+                        }
                     },
                     _ => false
                 }
@@ -688,8 +691,11 @@ impl SigmaRuleMatcher {
             CompiledPattern::Float(f) => {
                 match value {
                     Value::Float(v) => self.match_numeric_float(*v, *f, modifiers),
-                    Value::String(s) if let Ok(parsed) = value.as_str().parse::<f64>() => {
-                        self.match_numeric_float(parsed, *f, modifiers)
+                    Value::String(s) => {
+                        match s.parse::<f64>() {
+                            Ok(parsed) =>  self.match_numeric_float(parsed, *f, modifiers),
+                            _ => false
+                        }
                     },
                     _ => false
                 }
@@ -697,13 +703,13 @@ impl SigmaRuleMatcher {
             CompiledPattern::Bool(b) => {
                 match value {
                     Value::Boolean(v) => v == b,
-                    Value::String(s) if (4..=5).contains(&s.as_str().len()) => s.as_str().eq_ignore_ascii_case(&b.to_string()),
+                    Value::String(s) if (4..=5).contains(&s.len()) => s.eq_ignore_ascii_case(&b.to_string()),
                     _ => false
                 }
             }
             CompiledPattern::Null => {
                 if let Value::String(s) = value {
-                    s.as_str().is_empty() || s.as_str().eq_ignore_ascii_case("null")
+                    s.is_empty() || s.eq_ignore_ascii_case("null")
                 } else {
                     false
                 }
